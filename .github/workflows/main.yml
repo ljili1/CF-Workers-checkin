@@ -1,0 +1,29 @@
+name: Daily Checkin
+
+on:
+  schedule:
+    # 每天北京时间 08:00 执行（UTC 00:00）
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 支持手动触发
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run checkin script
+        env:
+          DOMAIN:   ${{ secrets.DOMAIN }}    # 面板地址，如 https://example.com
+          USER:     ${{ secrets.USER }}      # 登录邮箱
+          PASS:     ${{ secrets.PASS }}      # 登录密码
+          TGTOKEN:  ${{ secrets.TGTOKEN }}   # Telegram Bot Token（可选）
+          TGID:     ${{ secrets.TGID }}      # Telegram Chat ID（可选）
+        run: node checkin.js
